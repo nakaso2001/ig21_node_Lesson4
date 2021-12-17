@@ -4,34 +4,23 @@ const dotenv = require('dotenv')
 dotenv.config()
 const host = process.env.HOST
 const port = process.env.PORT
-const default_login_name=process.env.LOGIN_NAME
-const default_password=process.env.PASSWORD
+
+//router.js を読み込む
+const routes = require('./router')
+
 const app = express()
 
-//public フォルダを許可
 app.use(express.static(__dirname + '/public'))
-//URLエンコード
 app.use(express.urlencoded({ extended: true }))
 
-app.post('/auth', (req, res) => {
-    let message = 'ログインできません'
-    const login_name = req.body.login_name
-    const password = req.body.password
-    console.log(login_name)
-    console.log(password)
-    if(login_name==default_login_name&&password==default_password){
-        message="ログインしました"
-    }
-    res.send(message)
-})
+const layouts = require('express-ejs-layouts')
+app.set('layout', 'layouts/default');
+app.set('view engine', 'ejs')
+app.use(layouts) ;
 
-app.get('/', (req, res) => {
-    res.send('Hello YSE!!!!')
-})
+//routes.js を使う
+app.use(routes)
 
-app.get('/profile', (req, res) => {
-    res.send('This is profile page')
-})
 
 app.listen(port, host, () => {
     console.log('http://' + host + ':' + port)
